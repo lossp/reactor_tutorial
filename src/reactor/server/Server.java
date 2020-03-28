@@ -17,6 +17,7 @@ public class Server implements Runnable {
         serverSocketChannel.socket().bind(new InetSocketAddress(port));
         serverSocketChannel.configureBlocking(false);
         SelectionKey selectionKey = serverSocketChannel.register(selector, SelectionKey.OP_ACCEPT);
+        selectionKey.attach(new Acceptor(serverSocketChannel, selector));
     }
 
     @Override

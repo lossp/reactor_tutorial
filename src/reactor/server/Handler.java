@@ -37,7 +37,10 @@ public final class Handler implements Runnable {
     }
 
     private void read() throws IOException{
+        System.out.println("读取");
         channel.read(input);
+        input.flip();
+        System.out.println("received: " + new String(input.array()));
         if (inputIsComplete()) {
             process();
             state = SENDING;
@@ -46,8 +49,12 @@ public final class Handler implements Runnable {
     }
 
     private void send() throws IOException{
+        System.out.println("发送");
         channel.write(output);
-        if (outputIsComplete()) selectionKey.cancel();
+        if (outputIsComplete()) {
+            state = READING;
+            selectionKey.interestOps(SelectionKey.OP_READ);
+        }
     }
 
     private void process() {
