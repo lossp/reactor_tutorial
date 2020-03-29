@@ -1,9 +1,8 @@
-package reactor.client;
+package basicReactor.client;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
-import java.nio.channels.Selector;
 import java.nio.channels.SocketChannel;
 
 public class Client implements Runnable {
@@ -28,7 +27,6 @@ public class Client implements Runnable {
         input.flip();
 
         while (true) {
-            System.out.println("XUNHUAN");
             input.rewind();
             socketChannel.write(input);
             output.clear();

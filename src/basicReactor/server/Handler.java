@@ -1,4 +1,4 @@
-package reactor.server;
+package basicReactor.server;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -30,7 +30,7 @@ public final class Handler implements Runnable {
     public void run() {
         try {
             if (state == READING) { read(); }
-            if (state == SENDING) { send(); }
+            else if (state == SENDING) { send(); }
         } catch (IOException exception) {
             exception.printStackTrace();
         }
@@ -45,15 +45,18 @@ public final class Handler implements Runnable {
             process();
             state = SENDING;
             selectionKey.interestOps(SelectionKey.OP_WRITE);
+            selectionKey.selector().wakeup();
         }
     }
 
     private void send() throws IOException{
         System.out.println("发送");
+        output.rewind();
         channel.write(output);
         if (outputIsComplete()) {
             state = READING;
             selectionKey.interestOps(SelectionKey.OP_READ);
+            selectionKey.selector().wakeup();
         }
     }
 

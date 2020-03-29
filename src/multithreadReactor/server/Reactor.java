@@ -1,4 +1,4 @@
-package reactor.server;
+package multithreadReactor.server;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -7,11 +7,11 @@ import java.nio.channels.Selector;
 import java.nio.channels.ServerSocketChannel;
 import java.util.Set;
 
-public class Server implements Runnable {
-    final ServerSocketChannel serverSocketChannel;
-    final Selector selector;
+public class Reactor implements Runnable{
+    private ServerSocketChannel serverSocketChannel;
+    private Selector selector;
 
-    public Server(int port) throws IOException {
+    public Reactor(int port) throws IOException {
         serverSocketChannel = ServerSocketChannel.open();
         selector = Selector.open();
         serverSocketChannel.socket().bind(new InetSocketAddress(port));
@@ -22,18 +22,17 @@ public class Server implements Runnable {
 
     @Override
     public void run() {
-        System.out.println("Server is initializing");
+        System.out.println("Server is initializing --- (Multiple handlers Model)");
         while (!Thread.interrupted()) {
             try {
                 selector.select();
                 Set<SelectionKey> selected = selector.selectedKeys();
-                for (SelectionKey selectedItem: selected) {
+                for (SelectionKey selectedItem:selected) {
                     dispatch(selectedItem);
                 }
                 selected.clear();
-
-            } catch (IOException exception) {
-                exception.printStackTrace();
+            }catch (IOException e) {
+                e.printStackTrace();
             }
         }
     }
