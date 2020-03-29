@@ -62,6 +62,10 @@ public class MultiThreadHandler implements Runnable{
     }
     void writeProcess() throws IOException{
         System.out.println("写处理中");
+        if (!output.hasRemaining()) {
+            selectionKey.cancel();
+            return;
+        }
         output.rewind();
         socketChannel.write(output);
         state = READING;

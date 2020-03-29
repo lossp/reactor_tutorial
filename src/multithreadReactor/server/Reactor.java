@@ -28,6 +28,7 @@ public class Reactor implements Runnable{
                 selector.select();
                 Set<SelectionKey> selected = selector.selectedKeys();
                 for (SelectionKey selectedItem:selected) {
+                    printKeyInfo(selectedItem);
                     dispatch(selectedItem);
                 }
                 selected.clear();
@@ -40,5 +41,17 @@ public class Reactor implements Runnable{
     private void dispatch(SelectionKey selectionKey) {
         Runnable runnable = (Runnable) selectionKey.attachment();
         if (runnable != null) runnable.run();
+    }
+
+    private static void printKeyInfo(SelectionKey sk) {
+        StringBuilder s = new StringBuilder();
+        s.append("Att: " + (sk.attachment() == null ? "no" : "yes"));
+        s.append(", isReadable: " + sk.isReadable());
+        s.append(", isAcceptable: " + sk.isAcceptable());
+        s.append(", isConnectable: " + sk.isConnectable());
+        s.append(", isWritable: " + sk.isWritable());
+        s.append(", Valid: " + sk.isValid());
+        s.append(", Ops: " + sk.interestOps());
+        System.out.println(s.toString());
     }
 }
